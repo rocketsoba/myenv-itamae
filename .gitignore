@@ -1,0 +1,10 @@
+Gemfile.lock
+# Ignore bundler config.
+.bundle
+
+# Ignore bundler gems.
+vendor/bundle
+
+config.json
+hashed_pass
+templates/hosts
