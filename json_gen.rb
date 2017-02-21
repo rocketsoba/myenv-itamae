@@ -21,7 +21,7 @@ data = {
 }
 
 # bind-utilsはdig,nslookup
-base = ["epel-release","yum-utils","xz","wget","traceroute","zip","unzip","bind-utils","libevent2-devel","ncurses-devel"]
+base = ["epel-release","yum-utils","xz","wget","traceroute","zip","unzip","bind-utils","libevent2-devel","ncurses-devel","gcc","gcc-c++","gnutls-devel"]
 
 nested = {}
 base.each_with_index do |ele1,ind1|
@@ -30,19 +30,12 @@ end
 data["packages"]["base"] = nested
 
 
-epel = ["gnutls30-devel","bash-completion"]
+epel = ["bash-completion"]
 nested = {}
 epel.each_with_index do |ele1,ind1|
   nested[ind1+1] = ele1
 end
 data["packages"]["epel"] = nested
-
-scl = ["devtoolset-3-gcc","devtoolset-3-gcc-c++"]
-nested = {}
-scl.each_with_index do |ele1,ind1|
-  nested[ind1+1] = ele1
-end
-data["packages"]["scl"] = nested
 
 ius = ["git2u"]
 nested = {}

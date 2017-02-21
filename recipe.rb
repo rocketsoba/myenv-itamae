@@ -59,6 +59,30 @@ template "/etc/hosts" do
   group  "root"
 end
 
+
+
+
+
+node["packages"]["base"].each do |ele1|
+  package ele1[1]
+end
+
+node["packages"]["epel"].each do |ele1|
+  package ele1[1] do
+    options "--enablerepo=epel"
+  end
+end
+
+package "https://centos6.iuscommunity.org/ius-release.rpm" do
+  not_if "rpm -q ius-release"
+end
+
+node["packages"]["ius"].each do |ele1|
+  package ele1[1] do
+    options "--enablerepo=ius"
+  end
+end
+
 git "https://github.com/rocketsoba/dotfiles" do
   user node["userdata"]["name"]
   destination "/home/#{node["userdata"]["name"]}/.dotfiles"
@@ -75,38 +99,6 @@ execute "initial file deploy" do
 cp /home/#{node["userdata"]["name"]}/.dotfiles/init.el /home/#{node["userdata"]["name"]}/.emacs.d/init.el
 cp /home/#{node["userdata"]["name"]}/.dotfiles/_tmux.conf /home/#{node["userdata"]["name"]}/.tmux.conf
 EOH
-end
-
-node["packages"]["base"].each do |ele1|
-  package ele1[1]
-end
-
-node["packages"]["epel"].each do |ele1|
-  package ele1[1] do
-    options "--enablerepo=epel"
-  end
-end
-
-# 時間によってくっそおそいからやめた方がいい
-package "centos-release-SCL" do
-  not_if "rpm -q centos-release-scl-rh"
-end
-
-package "https://centos6.iuscommunity.org/ius-release.rpm" do
-  not_if "rpm -q ius-release"
-end
-
-# gcc4.9をいれてscl enableするとpythonのバージョンが固定されるっぽいのでそっちのバージョンアップもする場合は注意
-node["packages"]["scl"].each do |ele1|
-  package ele1[1] do
-    options "--enablerepo=centos-sclo-rh"
-  end
-end
-
-node["packages"]["ius"].each do |ele1|
-  package ele1[1] do
-    options "--enablerepo=ius"
-  end
 end
 
 directory "/tmp/work"
@@ -148,7 +140,7 @@ fi
 cd tmux-2.3
 if [ ! -d /home/#{node["userdata"]["name"]}/opt/tmux ]; then
   source scl_source enable devtoolset-3;
-  ./configure --prefix=/home/#{node["userdata"]["name"]}/opt/tmux LIBS="`pkg-config --static --libs ncurses`";
+  ./configure --prefix=/home/#{node["userdata"]["name"]}/opt/tmux;
   make -j4;
   make install;
 fi
@@ -157,8 +149,8 @@ EOH
 end
 
 
-directory "/tmp/work" do
-  action :delete
-end
+# directory "/tmp/work" do
+#   action :delete
+# end
 
 
