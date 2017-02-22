@@ -26,14 +26,15 @@ template "/etc/sudoers" do
   group  "root"
 end
 
+# テンプレートリソースはroot外のユーザでやるとエラーになる
 template "/home/#{node["userdata"]["name"]}/.bash_profile" do
+  owner node["userdata"]["name"]
+  group node["userdata"]["name"]
   source "templates/.bash_profile"
-  owner  node["userdata"]["name"]
-  group  node["userdata"]["name"]
 end
 
 directory "/home/"+node["userdata"]["name"]+"/.ssh" do
-  owner node["userdata"]["name"]
+  user node["userdata"]["name"]
   mode "700"
 end
 
@@ -148,6 +149,10 @@ node["packages"]["vmtools"].each do |ele1|
   package ele1[1]
 end
 
+# execute  "shutdown -r now" do
+#   exit(0);
+# end
+
 execute "build open-vm-tools" do
   cwd "/tmp/work/"
   command <<-EOH
@@ -156,6 +161,8 @@ if [ ! -e /tmp/work/open-vm-tools ]; then
 fi
 
 cd open-vm-tools/open-vm-tools
+
+
 
 autoreconf -i
 ./configure --without-xerces --without-x
