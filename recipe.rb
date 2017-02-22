@@ -11,13 +11,14 @@ end
 if node["userdata"]["flag"] == 1 then
   user node["userdata"]["name"] do
     password node["userdata"]["password"]
+    not_if "id -a #{node["userdata"]["name"]}"
   end
 end
 
-user node["userdata"]["name"] do
-  gid node["userdata"]["group"]
+execute "usermod -aG wheel #{node["userdata"]["name"]}" do
+  not_if "groups #{node["userdata"]["name"]} | grep wheel"
 end
-
+  
 template "/etc/sudoers" do
   source "templates/sudoers"
   mode   "440"
@@ -58,10 +59,6 @@ template "/etc/hosts" do
   owner  "root"
   group  "root"
 end
-
-
-
-
 
 node["packages"]["base"].each do |ele1|
   package ele1[1]
@@ -123,8 +120,7 @@ if [ ! -d /home/#{node["userdata"]["name"]}/opt/emacs ]; then
   make install;
 fi
 EOH
-  # echo 'source PATH="$PATH:/home/#{node["userdata"]["name"]}/opt/emacs"'
-  not_if "which emacs"
+  not_if "env PATH=$PATH:$HOME/bin:/home/#{node["userdata"]["name"]}/opt/emacs/bin:/home/#{node["userdata"]["name"]}/opt/tmux/bin which emacs"
 end
 
 execute "build tmux" do
@@ -145,9 +141,30 @@ if [ ! -d /home/#{node["userdata"]["name"]}/opt/tmux ]; then
   make install;
 fi
 EOH
-  not_if "which tmux"
+  not_if "env PATH=$PATH:$HOME/bin:/home/#{node["userdata"]["name"]}/opt/emacs/bin:/home/#{node["userdata"]["name"]}/opt/tmux/bin which tmux"
 end
 
+node["packages"]["vmtools"].each do |ele1|
+  package ele1[1]
+end
+
+execute "build open-vm-tools" do
+  cwd "/tmp/work/"
+  command <<-EOH
+if [ ! -e /tmp/work/open-vm-tools ]; then
+  git clone --depth 1 https://github.com/vmware/open-vm-tools
+fi
+
+cd open-vm-tools/open-vm-tools
+
+autoreconf -i
+./configure --without-xerces --without-x
+make -j4;
+make install;
+
+EOH
+  not_if "which vmware-checkvm"
+end
 
 # directory "/tmp/work" do
 #   action :delete
