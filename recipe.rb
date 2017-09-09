@@ -33,6 +33,12 @@ template "/home/#{node["userdata"]["name"]}/.bash_profile" do
   source "templates/.bash_profile"
 end
 
+template "/home/#{node["userdata"]["name"]}/.bashrc" do
+  owner node["userdata"]["name"]
+  group node["userdata"]["name"]
+  source "templates/.bashrc"
+end
+
 directory "/home/"+node["userdata"]["name"]+"/.ssh" do
   user node["userdata"]["name"]
   mode "700"
@@ -83,6 +89,12 @@ end
 
 package "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm" do
   not_if "rpm -q remi-release"
+end
+
+node["packages"]["remi56"].each do |ele1|
+  package ele1[1] do
+    options "--enablerepo=remi-php56,remi"
+  end
 end
 
 
@@ -148,14 +160,8 @@ EOH
   not_if "env PATH=$PATH:$HOME/bin:/home/#{node["userdata"]["name"]}/opt/emacs/bin:/home/#{node["userdata"]["name"]}/opt/tmux/bin which tmux"
 end
 
-node["packages"]["vmtools"].each do |ele1|
-  package ele1[1]
-end
-
-
 # directory "/tmp/work" do
 #   action :delete
 # end
 
 
->>>>>>> develop
