@@ -1,5 +1,5 @@
 # coding: utf-8
-if node["platform"] != "redhat" && node["platform_version"] != 6.8 then
+if node["platform"] != "redhat" && node["platform_version"] != 6.9 then
   exit(1)
 end
 
@@ -83,74 +83,7 @@ node["packages"]["ius"].each do |ele1|
   end
 end
 
-git "https://github.com/rocketsoba/dotfiles" do
-  user node["userdata"]["name"]
-  destination "/home/#{node["userdata"]["name"]}/.dotfiles"
-  repository "https://github.com/rocketsoba/dotfiles"
+package "http://rpms.famillecollet.com/enterprise/remi-release-6.rpm" do
+  not_if "rpm -q remi-release"
 end
-
-directory "/home/#{node["userdata"]["name"]}/.emacs.d" do
-  user node["userdata"]["name"]
-end
-
-execute "initial file deploy" do
-  user node["userdata"]["name"]
-  command <<-EOH
-cp /home/#{node["userdata"]["name"]}/.dotfiles/init.el /home/#{node["userdata"]["name"]}/.emacs.d/init.el
-cp /home/#{node["userdata"]["name"]}/.dotfiles/_tmux.conf /home/#{node["userdata"]["name"]}/.tmux.conf
-EOH
-end
-
-directory "/tmp/work"
-
-execute "build emacs" do
-  cwd "/tmp/work/"
-  command <<-EOH
-if [ ! -e /tmp/work/emacs-25.1.tar.xz ]; then
-  wget "http://ftp.jaist.ac.jp/pub/GNU/emacs/emacs-25.1.tar.xz"; 
-fi
-
-if [ ! -d /tmp/work/emacs-25.1 ]; then
-  tar xf emacs-25.1.tar.xz;
-fi
-
-cd emacs-25.1
-
-if [ ! -d /home/#{node["userdata"]["name"]}/opt/emacs ]; then
-  source scl_source enable devtoolset-3;
-  ./configure --prefix=/home/#{node["userdata"]["name"]}/opt/emacs;
-  make -j4;
-  make install;
-fi
-EOH
-  # echo 'source PATH="$PATH:/home/#{node["userdata"]["name"]}/opt/emacs"'
-  not_if "which emacs"
-end
-
-execute "build tmux" do
-  cwd "/tmp/work/"
-  command <<-EOH
-if [ ! -e /tmp/work/tmux-2.3.tar.gz ]; then
-  wget "https://github.com/tmux/tmux/releases/download/2.3/tmux-2.3.tar.gz";
-fi
-
-if [ ! -d /tmp/work/tmux-2.3.tar.gz ]; then
-  tar xf tmux-2.3.tar.gz;
-fi
-cd tmux-2.3
-if [ ! -d /home/#{node["userdata"]["name"]}/opt/tmux ]; then
-  source scl_source enable devtoolset-3;
-  ./configure --prefix=/home/#{node["userdata"]["name"]}/opt/tmux;
-  make -j4;
-  make install;
-fi
-EOH
-  not_if "which tmux"
-end
-
-
-# directory "/tmp/work" do
-#   action :delete
-# end
-
 

@@ -12,7 +12,7 @@ end
 
 data = {
   "userdata" => {
-    "name" => "yakisoba",
+    "name" => "vagrant",
     "password" => password,
     "group" => "10",
     "flag" => flag,
@@ -37,11 +37,25 @@ epel.each_with_index do |ele1,ind1|
 end
 data["packages"]["epel"] = nested
 
-ius = ["git2u"]
+ius = ["git2u", "httpd24u"]
 nested = {}
 ius.each_with_index do |ele1,ind1|
   nested[ind1+1] = ele1
 end
 data["packages"]["ius"] = nested
+
+remi56 = ["php-cli" "php-fpm" "php-pdo" "php-mysqlnd", "php-intl", "php-mbstring", "php-xml", "mysql", "mysql-server"]
+nested = {}
+remi56.each_with_index do |ele1,ind1|
+  nested[ind1+1] = ele1
+end
+data["package"]["remi56"] = nested
+
+# remi_without_ius = ["phpMyAdmin"]
+# nested = {}
+# remi_without_ius.each_with_index do |ele1,ind1|
+#   nested[ind1+1] = ele1
+# end
+# data["package"]["remi_without_ius"] = nested
 
 puts JSON.pretty_generate(data);
