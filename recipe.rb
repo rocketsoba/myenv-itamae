@@ -145,11 +145,6 @@ EOH
   not_if "env PATH=$PATH:$HOME/bin:/home/#{node["userdata"]["name"]}/opt/emacs/bin:/home/#{node["userdata"]["name"]}/opt/tmux/bin which tmux"
 end
 
-node["packages"]["vmtools"].each do |ele1|
-  package ele1[1]
-end
-
-
 # directory "/tmp/work" do
 #   action :delete
 # end
