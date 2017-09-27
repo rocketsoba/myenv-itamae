@@ -4,3 +4,4 @@ vendor/bundle
 config.json
 hashed_pass
 templates/hosts
+ruby-lint.yml
