@@ -1,5 +1,5 @@
 # coding: utf-8
-if node["platform"] != "redhat" && node["platform_version"] != 6.8 then
+if node["platform"] != "redhat" && node["platform_version"].to_i != 6 then
   exit(1)
 end
 
