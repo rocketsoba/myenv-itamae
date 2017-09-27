@@ -21,7 +21,7 @@ data = {
 }
 
 # bind-utilsはdig,nslookup
-base = ["epel-release","yum-utils","xz","wget","traceroute","zip","unzip","bind-utils","libevent2-devel","ncurses-devel","gcc","gcc-c++","gnutls-devel"]
+base = ["epel-release","yum-utils","xz","wget","traceroute","zip","unzip","bind-utils","libevent2-devel","ncurses-devel","gcc","gcc-c++","gnutls-devel","ntpdate"]
 
 nested = {}
 base.each_with_index do |ele1,ind1|
