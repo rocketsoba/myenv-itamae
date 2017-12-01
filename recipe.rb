@@ -97,6 +97,13 @@ node["packages"]["remi56"].each do |ele1|
   end
 end
 
+package "https://dev.mysql.com/get/mysql57-community-release-el6-11.noarch.rpm" do
+  not_if "rpm -q mysql57-community-release"
+end
+
+node["packages"]["mysql57"].each do |ele1|
+  package ele1[1]
+end
 
 directory "/home/#{node["userdata"]["name"]}/.emacs.d" do
   user node["userdata"]["name"]

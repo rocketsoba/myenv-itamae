@@ -44,11 +44,18 @@ ius.each_with_index do |ele1,ind1|
 end
 data["packages"]["ius"] = nested
 
-remi56 = ["php-cli", "php-fpm", "php-pdo", "php-mysqlnd", "php-intl", "php-mbstring", "php-xml", "mysql", "mysql-server"]
+remi56 = ["php-cli", "php-fpm", "php-pdo", "php-mysqlnd", "php-intl", "php-mbstring", "php-xml"]
 nested = {}
 remi56.each_with_index do |ele1,ind1|
   nested[ind1+1] = ele1
 end
 data["packages"]["remi56"] = nested
+
+mysql57 = ["mysql-community-server", "mysql-community-client"]
+nested = {}
+mysql57.each_with_index do |ele1,ind1|
+  nested[ind1+1] = ele1
+end
+data["packages"]["mysql57"] = nested
 
 puts JSON.pretty_generate(data);
